@@ -1,3 +1,9 @@
+#! /usr/bin/python3
+"""
+Handles client requests for multi-threaded server
+"""
+
+
 import socket
 import logging
 import json
@@ -20,7 +26,15 @@ logger = logging.getLogger(__name__)
 
 
 def read_req(client: socket.socket, cond: str = '') -> List[int]:
-    '''cond: has '''
+    """
+    Send a read request to the server and retrieve a list of integers
+    :param client: connected client
+    :type client: socket.socket
+    :param cond: has the form "<op> <condition>" e.g. "> 10", "% 3"
+    :type cond: str
+    :returns: List of integers
+    :rtype: List[int]
+    """
     payload = json.dumps({'req_type': 'read', 'data': cond})
     response = send(client, bytes(payload, encoding=CODEC_FORMAT), wait_response=True)
     logging.info(f'[READ] {response}')

@@ -1,3 +1,9 @@
+#! /usr/bin/python3
+
+"""
+Handles connection between server and client
+"""
+
 import socket
 from typing import Union
 

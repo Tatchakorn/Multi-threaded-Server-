@@ -1,8 +1,10 @@
-'''
+#! /usr/bin/python3
+
+"""
 Distributed Systems Assignment #2 
 Multi-threaded Server
 Author: Tatchakorn Saibunjom
-'''
+"""
 
 import threading
 import socket
@@ -29,7 +31,9 @@ logger = logging.getLogger(__name__)
 # -----** Critical Data **----- ||
 global_data = [0] * 10
 # || -----** Critical Data **-----
+
 writer_q = Queue()
+lock = threading.Lock()
 
 try:
     server = socket.socket(
@@ -58,6 +62,7 @@ def select_query(op: str, n: int) -> Union[Callable[[str], bool], bool]:
         return lambda x: x % n == 0
     else: 
         return False 
+
 
 def read(cond: str = '') -> List[int]:
     if cond == '': # just read -- for testing purpose
@@ -102,7 +107,8 @@ def handle_client(conn: socket.socket, addr: Tuple[str, int]) -> None:
 
         if req_type == 'write':
             writer_q.put(1)
-            write(msg.get('data'))
+            with lock:
+                write(msg.get('data'))
             writer_q.get()
             writer_q.task_done()
         

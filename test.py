@@ -1,15 +1,17 @@
+#! /usr/bin/python3
+
 import socket
 import random
 import threading
 import time
 
-from client import (
+from src.client import (
     read_req, 
     write_req, 
     disconn_req, 
     )
 
-from conn import ADDR
+from src.conn import ADDR
 
 
 available_ops = ('>', '>=', '<', '<=', '=', '%')
@@ -34,8 +36,8 @@ def test_single_client():
         n = random.randint(0, 10)
         cond = f'{rand_op} {n}'
         rand_list = [random.randint(0, 10) for _ in range(10)]
-        rand_read(client)
-        rand_write(client)
+        rand_read(client, cond)
+        rand_write(rand_list)
     disconn_req(client)
 
 
@@ -89,5 +91,5 @@ def test_read_and_write_clients(num_reader: int = 1, num_writer: int = 1, num_re
 
 
 if __name__ == '__main__':
-    # test_multiple_clients(num_client=6)
+    test_multiple_clients(num_client=6)
     test_read_and_write_clients(num_reader=6, num_writer=3)
