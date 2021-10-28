@@ -5,13 +5,13 @@ import random
 import threading
 import time
 
-from src.client import (
+from client import (
     read_req, 
     write_req, 
     disconn_req, 
     )
 
-from src.conn import ADDR
+from conn import ADDR
 
 
 available_ops = ('>', '>=', '<', '<=', '=', '%')
@@ -92,4 +92,4 @@ def test_read_and_write_clients(num_reader: int = 1, num_writer: int = 1, num_re
 
 if __name__ == '__main__':
     test_multiple_clients(num_client=6)
-    test_read_and_write_clients(num_reader=6, num_writer=3)
+    # test_read_and_write_clients(num_reader=6, num_writer=3)

@@ -29,7 +29,7 @@ def receive(conn: socket.socket) -> str:
 def send(conn: socket.socket, msg: bytes, wait_response: bool = False) -> Union[None, str]:
     header = str(len(msg)).encode(CODEC_FORMAT)
     header += b' ' * (HEADER_SIZE - len(header)) # 64-byte padding
-    conn.send(header)
-    conn.send(msg)
+    conn.sendall(header)
+    conn.sendall(msg)
     if wait_response:
         return receive(conn)

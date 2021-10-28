@@ -23,7 +23,7 @@ LOG_FORMAT = '%(asctime)s %(threadName)-17s %(message)s'
 logging.basicConfig(level=logging.INFO, 
                     format=LOG_FORMAT, 
                     handlers=[ 
-                        logging.FileHandler('server.log'),
+                        logging.FileHandler(r'server.log'),
                         logging.StreamHandler(sys.stdout),
                         ])
 logger = logging.getLogger(__name__)
@@ -94,7 +94,6 @@ def write(values: List[int]) -> None:
 
 def handle_client(conn: socket.socket, addr: Tuple[str, int]) -> None:
     logger.info(f'[NEW CONNECTION] {addr} connected.')
-    global num_writer
 
     while True:
         msg = receive(conn)
@@ -111,6 +110,8 @@ def handle_client(conn: socket.socket, addr: Tuple[str, int]) -> None:
                 write(msg.get('data'))
             writer_q.get()
             writer_q.task_done()
+            payload = json.dumps({'req_': 'write', 'res_': global_data})
+            send(conn, bytes(payload, encoding=CODEC_FORMAT))
         
         if req_type == 'read':
             writer_q.join()
@@ -118,14 +119,11 @@ def handle_client(conn: socket.socket, addr: Tuple[str, int]) -> None:
             data = read(req_cond)
             payload = json.dumps({'req_': req_cond, 'res_': data})
             send(conn, bytes(payload, encoding=CODEC_FORMAT))        
-            
-            payload = json.dumps({'req_': 'write', 'res_': global_data})
-            send(conn, bytes(payload, encoding=CODEC_FORMAT))
     conn.close()
 
 
 def start_server() -> None:
-    server.listen()
+    server.listen(1)
     logger.info(f'[LISTENING] on {SERVER_ADDR}')
     i = 0
     while True:
