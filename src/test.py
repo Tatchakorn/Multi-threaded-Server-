@@ -13,12 +13,14 @@ from client import (
 
 from conn import ADDR
 
+z0_to_100 = iter(range(1_000_000))
+lock = threading.Lock()
 
-available_ops = ('>', '>=', '<', '<=', '=', '%')
+available_ops = ('>', '>=', '<', '<=', '=', '%') # -- read only
 
 def rand_read(client: socket.socket) -> None:
     rand_op = random.choice(available_ops)
-    n = random.randint(0, 10)
+    n = random.randint(0, 1_000_000)
     cond = f'{rand_op} {n}'
     read_req(client, cond)
 
@@ -28,7 +30,14 @@ def rand_write(client: socket.socket) -> None:
     write_req(client, rand_list)
 
 
-def test_single_client():
+def not_rand_write(client: socket.socket) -> None:
+    global z0_to_100
+    with lock:
+        rand_list = [i for _, i in zip(range(10), z0_to_100)]
+        write_req(client, rand_list)
+
+
+def test_single_client() -> None:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     client.connect(ADDR)
     for _ in range(100):
@@ -65,12 +74,12 @@ def test_read_and_write_clients(num_reader: int = 1, num_writer: int = 1, num_re
     writers = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for _ in range(num_writer)]
     readers = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for _ in range(num_reader)]
     clients = writers + readers
-    for c in clients: c.connect(ADDR)
+    for c in clients: c.connect(ADDR) # Connect all clients
     
-
     def run_writer(client: socket.socket) -> None:
         for _ in range(num_req):
-            rand_write(client)
+            # rand_write(client)
+            not_rand_write(client)
             time.sleep(random.randint(0, 3))
     
 
@@ -91,5 +100,5 @@ def test_read_and_write_clients(num_reader: int = 1, num_writer: int = 1, num_re
 
 
 if __name__ == '__main__':
-    test_multiple_clients(num_client=6)
-    # test_read_and_write_clients(num_reader=6, num_writer=3)
+    # test_multiple_clients(num_client=6)
+    test_read_and_write_clients(num_reader=3, num_writer=3, num_req=30)

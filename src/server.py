@@ -106,8 +106,10 @@ def handle_client(conn: socket.socket, addr: Tuple[str, int]) -> None:
 
         if req_type == 'write':
             writer_q.put(1)
+            # -----** Critical Section **----- ||
             with lock:
                 write(msg.get('data'))
+            # || -----** Critical Section **-----
             writer_q.get()
             writer_q.task_done()
             payload = json.dumps({'req_': 'write', 'res_': global_data})
