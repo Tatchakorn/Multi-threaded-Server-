@@ -1,7 +1,8 @@
 import sys
 import subprocess
 import time
-
+import os
+from glob import glob
 
 if __name__ == '__main__':
     
@@ -23,10 +24,11 @@ if __name__ == '__main__':
     elif sys.platform == 'linux': # Ubuntu
         if len(sys.argv) > 1:
             if sys.argv[1] == 'del':
-                subprocess.Popen(['rm', '*.log'], shell=True)
+                for f in glob('*.log'): 
+                    os.remove(f)
             elif sys.argv[1] == 'test':
                 cmd = 'gnome-terminal -- python3 ./src/test.py'
-                subprocess.Popen(cmd.split(), shell=True)
+                subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
             elif sys.argv[1] == 'server':
                 cmd = 'gnome-terminal -- python3 ./src/server.py'
                 subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
