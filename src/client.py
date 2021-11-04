@@ -36,6 +36,6 @@ def write_req(client: socket.socket, data: List[int]) -> None:
     logging.info(f'[WRITE] {response}')
 
 
-def disconn_req(client: socket.socket):
+def disconn_req(client: socket.socket) -> None:
     payload = json.dumps({'req_type': DISCONNECT_MESSAGE})
     send(client, bytes(payload, encoding=CODEC_FORMAT))

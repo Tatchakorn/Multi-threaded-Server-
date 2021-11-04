@@ -78,7 +78,7 @@ def read(cond: str = '') -> List[int]:
         return 'Invalid request!'
     try:
         data = list(filter(select_cond, global_data))
-    except ZeroDivisionError:
+    except ZeroDivisionError as e:
         return 'Division by zero!'
     logger.info(f'[READ] "{cond}" : {data}')
     return data
@@ -90,12 +90,12 @@ def write(values: List[int]) -> None:
     local_var = 0
     for _ in range(DO_NOTHING): local_var += 1
     # THESE DO NOT WORK !!
-    # global_data = values
-    global_data = [0] * 10
+    global_data = values
+    # global_data = [0] * 10
     # for i in values: 
     #     global_data.append(i)
-    for i, val in enumerate(values): 
-        global_data[i] = val
+    # for i, val in enumerate(values): 
+        # global_data[i] = val
     logger.info(f'[WRITE] {global_data}')
 
 

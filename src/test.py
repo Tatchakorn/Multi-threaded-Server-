@@ -85,13 +85,13 @@ def test_read_and_write_clients(num_reader: int = 1,
         for _ in range(num_req):
             # rand_write(client)
             not_rand_write(client)
-            time.sleep(random.randint(0, 1))
+            # time.sleep(random.randint(0, 1))
     
 
     def run_reader(client: socket.socket) -> None:
         for _ in range(num_req):
             rand_read(client)
-            time.sleep(random.randint(0, 1))
+            # time.sleep(random.randint(0, 1))
     
 
     w_threads = [threading.Thread(name=f'writer_[{i+1}]', target=run_writer, args=(w,)) 
@@ -107,4 +107,4 @@ def test_read_and_write_clients(num_reader: int = 1,
 
 if __name__ == '__main__':
     # test_read_and_write_clients(num_reader=1, num_writer=4, num_req=30)
-    test_read_and_write_clients(num_reader=2, num_writer=6)
+    test_read_and_write_clients(num_reader=2, num_writer=3)

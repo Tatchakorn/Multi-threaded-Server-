@@ -13,6 +13,8 @@ if __name__ == '__main__':
                 subprocess.Popen(['start', 'python', r'.\src\test.py'], shell=True)
             elif sys.argv[1] == 'server':
                 subprocess.Popen(['start', 'python', r'.\src\test.py'], shell=True)
+            elif sys.argv[1] == 'mul':
+                subprocess.Popen(['start', 'python', r'.\src\multicast.py'], shell=True)
         else:
             subprocess.Popen(['start', 'python', r'.\src\server.py'], shell=True)
             time.sleep(2)
