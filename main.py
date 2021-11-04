@@ -19,3 +19,23 @@ if __name__ == '__main__':
             subprocess.Popen(['start', 'python', r'.\src\server.py'], shell=True)
             time.sleep(2)
             subprocess.Popen(['start', 'python', r'.\src\test.py'], shell=True)
+    
+    elif sys.platform == 'linux': # Ubuntu
+        if len(sys.argv) > 1:
+            if sys.argv[1] == 'del':
+                subprocess.Popen(['rm', '*.log'], shell=True)
+            elif sys.argv[1] == 'test':
+                cmd = 'gnome-terminal -- python3 ./src/test.py'
+                subprocess.Popen(cmd.split(), shell=True)
+            elif sys.argv[1] == 'server':
+                cmd = 'gnome-terminal -- python3 ./src/server.py'
+                subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+            elif sys.argv[1] == 'mul':
+                cmd = 'gnome-terminal -- python3 ./src/multicast.py'
+                subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        else:
+            cmd = 'gnome-terminal -- python3 ./src/server.py'
+            subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+            time.sleep(2)
+            cmd = 'gnome-terminal -- python3 ./src/test.py'
+            subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
