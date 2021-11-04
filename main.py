@@ -35,6 +35,7 @@ if __name__ == '__main__':
             elif sys.argv[1] == 'mul':
                 cmd = 'gnome-terminal -- python3 ./src/multicast.py'
                 subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+
         else:
             cmd = 'gnome-terminal -- python3 ./src/server.py'
             subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)

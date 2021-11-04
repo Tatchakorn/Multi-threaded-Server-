@@ -9,7 +9,11 @@ from typing import Union
 
 PORT = 5050
 HOST_NAME = socket.gethostname()
-SERVER_ADDR = socket.gethostbyname(HOST_NAME)
+# SERVER_ADDR = socket.gethostbyname(HOST_NAME)
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+SERVER_ADDR = s.getsockname()[0]
+
 ADDR = (SERVER_ADDR, PORT)
 
 HEADER_SIZE = 64 # 64-byte header -- specifying message length

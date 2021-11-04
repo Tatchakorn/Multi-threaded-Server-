@@ -89,13 +89,9 @@ def write(values: List[int]) -> None:
     # Perform a busy loop incrementing a local variable from 0 to 2,000,000
     local_var = 0
     for _ in range(DO_NOTHING): local_var += 1
-    # THESE DO NOT WORK !!
-    global_data = values
-    # global_data = [0] * 10
-    # for i in values: 
-    #     global_data.append(i)
-    # for i, val in enumerate(values): 
-        # global_data[i] = val
+    global_data = []
+    for val in values: 
+        global_data.append(val)
     logger.info(f'[WRITE] {global_data}')
 
 
