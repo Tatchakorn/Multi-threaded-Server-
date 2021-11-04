@@ -28,12 +28,13 @@ logging.basicConfig(level=logging.INFO,
                         ])
 logger = logging.getLogger(__name__)
 
-# -----** Critical Data **----- ||
+# -----** Critical Data **-----||
 global_data = [0] * 10
-# || -----** Critical Data **-----
+# ||-----** Critical Data **-----
 
 writer_q = Queue()
 lock = threading.Lock()
+DO_NOTHING = 2_000_000
 
 try:
     server = socket.socket(
@@ -70,7 +71,7 @@ def read(cond: str = '') -> List[int]:
     op, n = cond.split()
     # Perform a busy loop incrementing a local variable from 0 to 2,000,000
     local_var = 0
-    for _ in range(2_000_000): local_var += 1
+    for _ in range(DO_NOTHING): local_var += 1
     
     select_cond = select_query(op, int(n))
     if select_cond is False:
@@ -87,8 +88,14 @@ def write(values: List[int]) -> None:
     global global_data 
     # Perform a busy loop incrementing a local variable from 0 to 2,000,000
     local_var = 0
-    for _ in range(2_000_000): local_var += 1
-    global_data = values
+    for _ in range(DO_NOTHING): local_var += 1
+    # THESE DO NOT WORK !!
+    # global_data = values
+    global_data = [0] * 10
+    # for i in values: 
+    #     global_data.append(i)
+    for i, val in enumerate(values): 
+        global_data[i] = val
     logger.info(f'[WRITE] {global_data}')
 
 
@@ -128,13 +135,15 @@ def start_server() -> None:
     server.listen(1)
     logger.info(f'[LISTENING] on {SERVER_ADDR}')
     i = 0
-    while True:
-        conn, addr = server.accept()
-        i += 1
-        t = threading.Thread(name=f'handler_[{i}]', target=handle_client, args=(conn, addr))
-        t.start()
-        logger.info(f'[ACTIVE CONNECTION] {threading.active_count() - 1}') # exclude main thread
-
+    try:
+        while True:
+            conn, addr = server.accept()
+            i += 1
+            t = threading.Thread(name=f'handler_[{i}]', target=handle_client, args=(conn, addr))
+            t.start()
+            logger.info(f'[ACTIVE CONNECTION] {threading.active_count() - 1}') # exclude main thread
+    finally:
+        conn.close()
 
 if __name__ == '__main__':
     logger.info('[SERVER STARTED]')
