@@ -15,7 +15,7 @@ if __name__ == '__main__':
             elif sys.argv[1] == 'server':
                 subprocess.Popen(['start', 'python', r'.\src\test.py'], shell=True)
             elif sys.argv[1] == 'mul':
-                subprocess.Popen(['start', 'python', r'.\src\multicast.py'], shell=True)
+                subprocess.Popen(['start', 'python', r'.\multicast\multicast.py'], shell=True)
         else:
             subprocess.Popen(['start', 'python', r'.\src\server.py'], shell=True)
             time.sleep(2)
@@ -33,7 +33,7 @@ if __name__ == '__main__':
                 cmd = 'gnome-terminal -- python3 ./src/server.py'
                 subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
             elif sys.argv[1] == 'mul':
-                cmd = 'gnome-terminal -- python3 ./src/multicast.py'
+                cmd = 'gnome-terminal -- python3 ./multicast/multicast.py'
                 subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 
         else:

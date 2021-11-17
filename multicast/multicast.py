@@ -1,17 +1,10 @@
+#! /usr/bin/python3
+
 import socket
 import struct
 import random
 import sys
 from typing import Union, Callable
-
-'''
-1. TCP / UDP
-2. Multicast Problem
-3. + 4 5
-4. ...
-'''
-
-test_message = 'stuff'
 
 available_ops = ('+', '-', '/', '*')
 test_req = '+ 4 5'
