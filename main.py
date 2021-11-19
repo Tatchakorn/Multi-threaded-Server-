@@ -1,5 +1,10 @@
 #! /usr/bin/python3
 
+"""
+Distributed Systems Assignment #1, #2 and #3
+Author: Tatchakorn Saibunjom
+"""
+
 import sys
 import subprocess
 import time
@@ -18,13 +23,15 @@ multicast_udp_server_path = Path('./multicast/udp_server.py')
 LINUX_TERMINAL_CMD = 'gnome-terminal -- python3'
 
 GREETINGS = '''Greetings!
+Examples: "mt", "mt s", "mc st", "exit"
 Options:
     "mt": Multi-threaded Server
         "t": test only
         "s": server only
     "mc": Multicast Server
         "t": test only
-        "s": server only
+        "st": tcp server only
+        "su": udp server only
     "r": RPC and RMI
     "del": delete *.log files
     "help": Greetings! again!
@@ -51,15 +58,16 @@ def exec_win32_(command: str) -> Union[None, bool]:
             return False
     elif command[0] == 'mc':
         if len(command) == 1:
-            print('yes')
-            subprocess.Popen(['start', 'python', multicast_tcp_server_path], shell=True)
+            subprocess.Popen(['start', 'python', multicast_udp_server_path], shell=True)
             time.sleep(2)
             subprocess.Popen(['start', 'python', multicast_test_path], shell=True)
         elif len(command) == 2:
             if command[1] == 't':
                 subprocess.Popen(['start', 'python', multicast_test_path], shell=True)
-            elif command[1] == 's':
+            elif command[1] == 'st':
                 subprocess.Popen(['start', 'python', multicast_tcp_server_path], shell=True)
+            elif command[1] == 'su':
+                subprocess.Popen(['start', 'python', multicast_udp_server_path], shell=True)
     elif command[0] == 'del':
         subprocess.Popen(['del', '*.log'], shell=True)
     else:
@@ -88,7 +96,7 @@ def exec_linux_(command: str) -> Union[None, bool]:
             return False
     elif command[0] == 'mc':
         if len(command) == 1:
-            cmd = f'{LINUX_TERMINAL_CMD} {multicast_tcp_server_path}'
+            cmd = f'{LINUX_TERMINAL_CMD} {multicast_udp_server_path}'
             subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
             time.sleep(2)
             cmd = f'{LINUX_TERMINAL_CMD} {multicast_test_path}'
@@ -97,8 +105,11 @@ def exec_linux_(command: str) -> Union[None, bool]:
             if command[1] == 't':
                 cmd = f'{LINUX_TERMINAL_CMD} {multicast_test_path}'
                 subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-            elif command[1] == 's':
+            elif command[1] == 'st':
                 cmd = f'{LINUX_TERMINAL_CMD} {multicast_tcp_server_path}'
+                subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+            elif command[1] == 'su':
+                cmd = f'{LINUX_TERMINAL_CMD} {multicast_udp_server_path}'
                 subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     elif command[0] == 'del':
         for f in glob('*.log'): 

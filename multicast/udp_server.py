@@ -1,20 +1,12 @@
 #! /usr/bin/python3
 
-"""
-Distributed Systems Assignment #3
-Author: Tatchakorn Saibunjom
-"""
-
-import threading
 import socket
 import sys
 import logging
-import json
-from queue import Queue
-from typing import Callable, List, Tuple, Union
-
+from typing import Callable, Union
+from pprint import pformat
 from conn import (
-    ADDR, DISCONNECT_MESSAGE, SERVER_ADDR, CODEC_FORMAT,
+    ADDR, CODEC_FORMAT,
     send, receive,
 )
 
@@ -27,16 +19,11 @@ logging.basicConfig(level=logging.INFO,
                         ])
 logger = logging.getLogger(__name__)
 
-try:
-    server = socket.socket(
-        family=socket.AF_INET,
-        type=socket.SOCK_DGRAM,
-        )
-    server.bind(ADDR)
-except socket.error as e:
-    logger.error(f'Fail to create a socket: {e}')
-    sys.exit()
+# ||--- Global
 
+visited_addr = {}
+
+# ---||
 
 def select_op(op: str) -> Union[Callable[[int, int], Union[int, float]], bool]:
     if op == '+':       
@@ -63,35 +50,30 @@ def exec(req: str) -> Union[int, float, bool]:
         return False
 
 
-def handle_client(conn: socket.socket, addr: Tuple[str, int]) -> None:
-    logger.info(f'[NEW CONNECTION] {addr} connected.')
-
+def start_server():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind(ADDR)
     while True:
-        msg = receive(conn)
-        logger.info(f'[REQUEST] from {addr}: {msg}')
-        msg = json.loads(msg)
-        req = msg.get('req')
-        print(req)
-        if req == DISCONNECT_MESSAGE:
-            break
-    conn.close()
+        
+        logger.info('Wating...')
+        data, addr = s.recvfrom(1024)
+        logger.info(f'[REQUEST] from {addr} : {data}')
+        result = str(exec(data.decode(CODEC_FORMAT)))
+        s.sendto(bytes(result, encoding=CODEC_FORMAT), addr)
+        if addr not in visited_addr:
+            visited_addr[addr] = 1
+        else:
+            visited_addr[addr] += 1
+        
+        logger.info(pformat(visited_addr))
+        
 
-
-def start_server() -> None:
-    server.listen(1)
-    logger.info(f'[LISTENING] on {SERVER_ADDR}')
-    try:
-        while True:
-            conn, addr = server.accept()
-            t = threading.Thread(target=handle_client, args=(conn, addr))
-            t.start()
-            logger.info(f'[ACTIVE CONNECTION] {threading.active_count() - 1}') # exclude main thread
-    finally:
-        conn.close()
 
 if __name__ == '__main__':
     try:
         logger.info('[SERVER STARTED]')
         start_server()
+    except Exception as e:
+        logger.error(e)
     finally:
         input('Press [ENTER]...')

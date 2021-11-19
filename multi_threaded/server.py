@@ -1,9 +1,7 @@
 #! /usr/bin/python3
 
-"""
-Distributed Systems Assignment #2 
+""" 
 Multi-threaded Server
-Author: Tatchakorn Saibunjom
 """
 
 import threading

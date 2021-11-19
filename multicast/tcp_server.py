@@ -1,17 +1,12 @@
 #! /usr/bin/python3
 
-"""
-Distributed Systems Assignment #3
-Author: Tatchakorn Saibunjom
-"""
-
 import threading
 import socket
 import sys
 import logging
 import json
-from queue import Queue
-from typing import Callable, List, Tuple, Union
+from pprint import pformat
+from typing import Callable, Tuple, Union
 
 from conn import (
     ADDR, DISCONNECT_MESSAGE, SERVER_ADDR, CODEC_FORMAT,
@@ -26,6 +21,13 @@ logging.basicConfig(level=logging.INFO,
                         logging.StreamHandler(sys.stdout),
                         ])
 logger = logging.getLogger(__name__)
+
+# ||--- Global
+
+visited_addr = {}
+
+# ---||
+lock = threading.Lock()
 
 
 def select_op(op: str) -> Union[Callable[[int, int], Union[int, float]], bool]:
@@ -65,6 +67,13 @@ def handle_client(conn: socket.socket, addr: Tuple[str, int]) -> None:
         if req == DISCONNECT_MESSAGE:
             break
         
+        with lock:
+            if addr not in visited_addr:
+                visited_addr[addr] = 1
+            else:
+                visited_addr[addr] += 1
+
+        logger.info(pformat(visited_addr))
         res = exec(req)
         if res is not False:
             payload = json.dumps({'res_': res})
