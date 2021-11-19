@@ -3,11 +3,12 @@
 import socket
 import sys
 import logging
+import struct
 from typing import Callable, Union
 from pprint import pformat
 from conn import (
     ADDR, CODEC_FORMAT,
-    send, receive,
+    send, receive
 )
 
 LOG_FORMAT = '%(asctime)s %(threadName)-17s %(message)s'
@@ -50,6 +51,37 @@ def exec(req: str) -> Union[int, float, bool]:
         return False
 
 
+
+def multicast_send(msg: str):
+    multicast_group = ('224.3.29.71', 10000)
+    # multicast_group = ('255.255.255.255', 10000)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # Set a timeout so the socket does not block indefinitely when
+    # trying to receive data.
+    sock.settimeout(10)
+    # Set the time-to-live for messages to 1 so they do not go 
+    # past the local network segment.
+    ttl = struct.pack('b', 1)
+    sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
+    try:
+        logger.info(f'[SEND] "{msg}"')
+        sent = sock.sendto(msg.encode(), multicast_group)
+        
+        # Look for responses from all recipients
+        while True:
+            print('[WAIT RESPOND]...')
+            try:
+                data, server = sock.recvfrom(16)
+            except socket.timeout:
+                logger.info('timed out, no more responses')
+                break
+            else:
+                logger.info(f'[RECEIVED] "{data}" from {server}')
+    finally:
+        logger.info('closing socket')
+        sock.close()
+
+
 def start_server():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(ADDR)
@@ -72,7 +104,8 @@ def start_server():
 if __name__ == '__main__':
     try:
         logger.info('[SERVER STARTED]')
-        start_server()
+        # start_server()
+        multicast_send('Yooooooooo')
     except Exception as e:
         logger.error(e)
     finally:

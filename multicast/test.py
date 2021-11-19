@@ -26,7 +26,7 @@ import threading
 from typing import Union, Callable
 from conn import ADDR
 from client import (
-    req, udp_req,disconn_req,
+    req, udp_req, disconn_req, multicast_receive
 )
 
 AVAILABLE_OPS = ('+', '-', '/', '*')
@@ -72,7 +72,8 @@ def test_udp_req(num_client: int = 3):
 
 if __name__ == '__main__':
     try:
-        test_udp_req(5)
+        # test_udp_req(5)
+        multicast_receive()
     except Exception as e:
         print(e)
     finally:

@@ -24,10 +24,12 @@ logging.basicConfig(level=logging.INFO,
                         ])
 logger = logging.getLogger(__name__)
 
+
 def req(client: socket.socket, expr: str = '') -> str:
     payload = json.dumps({'req': expr})
+    logger.info(f'[SEND] {expr}')
     response = send(client, bytes(payload, encoding=CODEC_FORMAT), wait_response=True)
-    logging.info(f'[req: {expr}] {response}')
+    logger.info(f'[RECIEVE] {response} from {addr}')
     return response
 
 
@@ -43,3 +45,25 @@ def udp_req(client: socket.socket, expr: str) -> str:
     response = response.decode(CODEC_FORMAT)
     logger.info(f'[RECIEVE] {response} from {addr}')
     return response
+
+
+def multicast_receive():
+    multicast_group = '224.3.29.71'
+    server_address = ('', 10000)
+    # Create the socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # Bind to the server address
+    sock.bind(server_address)
+    # Tell the operating system to add the socket to the multicast group
+    # on all interfaces.
+    group = socket.inet_aton(multicast_group)
+    mreq = struct.pack('4sl', group, socket.INADDR_ANY)
+    sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+    # Receive/respond loop
+    while True:
+        logger.info('\nwaiting to receive message')
+        data, address = sock.recvfrom(1024)
+        logger.info(f'received {len(data)} bytes from {address}')
+        logger.info(str(data))
+        logger.info(f'sending acknowledgement to {address}')
+        sock.sendto(('ack').encode(), address)
