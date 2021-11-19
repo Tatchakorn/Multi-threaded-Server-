@@ -5,14 +5,19 @@ Handles connection between server and client
 """
 
 import socket
-from typing import Union
+from typing import Tuple, Union
+
+
+def get_ip() -> Tuple[str, int]:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 80))
+    return s.getsockname()[0]
+
 
 PORT = 5050
 HOST_NAME = socket.gethostname()
 # SERVER_ADDR = socket.gethostbyname(HOST_NAME)
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-SERVER_ADDR = s.getsockname()[0]
+SERVER_ADDR = get_ip()
 
 ADDR = (SERVER_ADDR, PORT)
 

@@ -23,18 +23,10 @@ logging.basicConfig(level=logging.INFO,
                         ])
 logger = logging.getLogger(__name__)
 
-
-def read_req(client: socket.socket, cond: str = '') -> List[int]:
-    payload = json.dumps({'req_type': 'read', 'data': cond})
+def req(client: socket.socket, cond: str = '') -> List[int]:
+    payload = json.dumps({'req': cond})
     response = send(client, bytes(payload, encoding=CODEC_FORMAT), wait_response=True)
-    logging.info(f'[READ] {response}')
-
-
-def write_req(client: socket.socket, data: List[int]) -> None:
-    payload = json.dumps({'req_type': 'write', 'data': data})
-    response = send(client, bytes(payload, encoding=CODEC_FORMAT), wait_response=True)
-    logging.info(f'[WRITE] {response}')
-
+    logging.info(f'[req: {cond}] {response}')
 
 def disconn_req(client: socket.socket) -> None:
     payload = json.dumps({'req_type': DISCONNECT_MESSAGE})
