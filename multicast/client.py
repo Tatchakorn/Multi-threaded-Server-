@@ -29,5 +29,5 @@ def req(client: socket.socket, cond: str = '') -> List[int]:
     logging.info(f'[req: {cond}] {response}')
 
 def disconn_req(client: socket.socket) -> None:
-    payload = json.dumps({'req_type': DISCONNECT_MESSAGE})
+    payload = json.dumps({'req': DISCONNECT_MESSAGE})
     send(client, bytes(payload, encoding=CODEC_FORMAT))

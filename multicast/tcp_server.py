@@ -27,16 +27,6 @@ logging.basicConfig(level=logging.INFO,
                         ])
 logger = logging.getLogger(__name__)
 
-try:
-    server = socket.socket(
-        family=socket.AF_INET,
-        type=socket.SOCK_STREAM,
-        )
-    server.bind(ADDR)
-except socket.error as e:
-    logger.error(f'Fail to create a socket: {e}')
-    sys.exit()
-
 
 def select_op(op: str) -> Union[Callable[[int, int], Union[int, float]], bool]:
     if op == '+':       
@@ -71,7 +61,7 @@ def handle_client(conn: socket.socket, addr: Tuple[str, int]) -> None:
         logger.info(f'[REQUEST] from {addr}: {msg}')
         msg = json.loads(msg)
         req = msg.get('req')
-        logger.info(f'[req] {req}')
+        
         if req == DISCONNECT_MESSAGE:
             break
         
@@ -99,9 +89,17 @@ def start_server() -> None:
 
 if __name__ == '__main__':
     try:
+        server = socket.socket(
+            family=socket.AF_INET,
+            type=socket.SOCK_STREAM,
+            )
+        server.bind(ADDR)
+    except socket.error as e:
+        logger.error(f'Fail to create a socket: {e}')
+        sys.exit()
+    
+    try:
         logger.info('[SERVER STARTED]')
         start_server()
-    except:
-        input('Press [ENTER]...')
     finally:
         input('Press [ENTER]...')

@@ -17,7 +17,6 @@ def get_ip() -> Tuple[str, int]:
 PORT = 5050
 HOST_NAME = socket.gethostname()
 # SERVER_ADDR = socket.gethostbyname(HOST_NAME)
-
 SERVER_ADDR = get_ip()
 
 ADDR = (SERVER_ADDR, PORT)

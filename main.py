@@ -50,7 +50,16 @@ def exec_win32_(command: str) -> Union[None, bool]:
         else:
             return False
     elif command[0] == 'mc':
-        subprocess.Popen(['start', 'python', multicast_test_path], shell=True)
+        if len(command) == 1:
+            print('yes')
+            subprocess.Popen(['start', 'python', multicast_tcp_server_path], shell=True)
+            time.sleep(2)
+            subprocess.Popen(['start', 'python', multicast_test_path], shell=True)
+        elif len(command) == 2:
+            if command[1] == 't':
+                subprocess.Popen(['start', 'python', multicast_test_path], shell=True)
+            elif command[1] == 's':
+                subprocess.Popen(['start', 'python', multicast_tcp_server_path], shell=True)
     elif command[0] == 'del':
         subprocess.Popen(['del', '*.log'], shell=True)
     else:
