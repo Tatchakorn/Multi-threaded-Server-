@@ -73,7 +73,7 @@ def handle_client(conn: socket.socket, addr: Tuple[str, int]) -> None:
             else:
                 visited_addr[addr] += 1
 
-        logger.info(pformat(visited_addr))
+        # logger.info(pformat(visited_addr))
         res = exec(req)
         if res is not False:
             payload = json.dumps({'res_': res})

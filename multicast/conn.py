@@ -26,7 +26,8 @@ ADDR = (SERVER_ADDR, PORT)
 HEADER_SIZE = 64 # 64-byte header -- specifying message length
 CODEC_FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = 'disconnect'
-REC_SIZE = 2048
+SEND_RECV_SIZE = 1024
+MULTICAST_GROUP = ('224.3.29.71', 10000)
 
 
 def receive(conn: socket.socket) -> str:

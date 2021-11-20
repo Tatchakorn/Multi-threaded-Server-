@@ -11,7 +11,8 @@ import struct
 from typing import List, Union
 
 from conn import (
-    DISCONNECT_MESSAGE, CODEC_FORMAT, ADDR, 
+    DISCONNECT_MESSAGE, CODEC_FORMAT, 
+    ADDR, SEND_RECV_SIZE, MULTICAST_GROUP, 
     send,
 )
 
@@ -29,7 +30,7 @@ def req(client: socket.socket, expr: str = '') -> str:
     payload = json.dumps({'req': expr})
     logger.info(f'[SEND] {expr}')
     response = send(client, bytes(payload, encoding=CODEC_FORMAT), wait_response=True)
-    logger.info(f'[RECIEVE] {response} from {addr}')
+    logger.info(f'[RECIEVE] {response}')
     return response
 
 
@@ -47,23 +48,20 @@ def udp_req(client: socket.socket, expr: str) -> str:
     return response
 
 
-def multicast_receive():
-    multicast_group = '224.3.29.71'
-    server_address = ('', 10000)
-    # Create the socket
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    # Bind to the server address
-    sock.bind(server_address)
+def multicast_receive(client: socket.socket):
+    server_addr = ('', 10000)
+    client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    client.bind(server_addr)
     # Tell the operating system to add the socket to the multicast group
     # on all interfaces.
-    group = socket.inet_aton(multicast_group)
+    group = socket.inet_aton(MULTICAST_GROUP[0])
     mreq = struct.pack('4sl', group, socket.INADDR_ANY)
-    sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+    client.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     # Receive/respond loop
     while True:
-        logger.info('\nwaiting to receive message')
-        data, address = sock.recvfrom(1024)
-        logger.info(f'received {len(data)} bytes from {address}')
+        logger.info('[WAITING] to receive message')
+        data, address = client.recvfrom(SEND_RECV_SIZE)
+        logger.info(f'[RECEIVE] {len(data)} bytes from {address}')
         logger.info(str(data))
-        logger.info(f'sending acknowledgement to {address}')
-        sock.sendto(('ack').encode(), address)
+        logger.info(f'[ACK] to {address}')
+        client.sendto(('ack').encode(CODEC_FORMAT), address)

@@ -13,20 +13,21 @@ problem.
 simple arithmetic computing requests in prefix form such 
 as “+ 4 5” and send back the result. Write 
 corresponding clients to test them.
-4. Using Python multicast, write a client that sends out 10 
-messages to a multicast group and another client that 
-receives the messages. Give a few tests to see if all 
-messages were correctly received.
-
+4. Using Python multicast, 
+write a client that sends out 10 messages 
+to a multicast group 
+and another client that receives the messages. 
+Give a few tests to see if all messages were correctly received.
 """
+
 
 import random
 import socket
 import threading
-from typing import Union, Callable
+from typing import List
 from conn import ADDR
 from client import (
-    req, udp_req, disconn_req, multicast_receive
+    req, udp_req, disconn_req
 )
 
 AVAILABLE_OPS = ('+', '-', '/', '*')
@@ -38,12 +39,20 @@ def rand_req() -> str:
     return f'{op} {a} {b}'
 
 
+def create_upd_clients(num_client: int) -> List[socket.socket]:
+    return [socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+        for _ in range(num_client)]
 
-def test_tcp_req(num_client: int = 3):
+
+def create_tcp_clients(num_client: int) -> List[socket.socket]:
     clients = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
                 for _ in range(num_client)]
     for client in clients: client.connect(ADDR)
-    
+    return clients
+
+def test_tcp_req(num_client: int = 3):
+    clients = create_tcp_clients(num_client)
+
 
     def run(client: socket.socket) -> None:
         for _ in range(5):
@@ -58,8 +67,7 @@ def test_tcp_req(num_client: int = 3):
 
 
 def test_udp_req(num_client: int = 3):
-    clients = [socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
-                for _ in range(num_client)]
+    clients = create_upd_clients(num_client)
     
     def run(client: socket.socket) -> None:
         for _ in range(5):
@@ -70,10 +78,11 @@ def test_udp_req(num_client: int = 3):
     for t in threads: t.start()
     for t in threads: t.join()
 
+
 if __name__ == '__main__':
     try:
-        # test_udp_req(5)
-        multicast_receive()
+        # test_tcp_req()
+        test_udp_req()
     except Exception as e:
         print(e)
     finally:
