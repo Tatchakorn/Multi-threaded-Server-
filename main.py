@@ -21,6 +21,31 @@ mtc_udp_server_path = Path('./multicast/udp_server.py')
 mtc_mtc_send_path = Path('./multicast/mtc_send.py')
 mtc_mtc_recv_path = Path('./multicast/mtc_recv.py')
 
+
+rpc_client_path = Path('./rpc_rmi/rpc_client.py')
+rpc_server_path = Path('./rpc_rmi/rpc_server.py')
+rmi_client_path = Path('./rpc_rmi/rmi_client.py')
+rmi_server_path = Path('./rpc_rmi/rmi_server.py')
+
+
+def main_rpc_rmi():
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'rpc':
+            subprocess.Popen(['start', 'python', rpc_server_path], shell=True)
+            time.sleep(3)
+            subprocess.Popen(['start', 'python', rpc_client_path], shell=True)
+            return
+        elif sys.argv[1] == 'rmi':
+            subprocess.Popen(['start', 'python', '-m', 'Pyro5.nameserver'], shell=True)
+            time.sleep(5)
+            subprocess.Popen(['start', 'python', rmi_server_path], shell=True)
+            time.sleep(5)
+            subprocess.Popen(['start', 'python', rmi_client_path], shell=True)
+            return
+        elif sys.argv[1] == 'del':
+            subprocess.Popen(['del', '*.log'], shell=True)
+    print('"rpc", "rmi" or "del"?')
+
 LINUX_TERMINAL_CMD = 'gnome-terminal -- python3'
 
 GREETINGS = '''Greetings!
@@ -34,6 +59,8 @@ Options:
         "st": tcp server only
         "su": udp server only
     "r": RPC and RMI
+        "rpc": RPC
+        "RMI": RMI
     "del": delete *.log files
     "help": Greetings! again!
     "exit": exit
@@ -69,6 +96,8 @@ def exec_win32_(command: str) -> Union[None, bool]:
                 subprocess.Popen(['start', 'python', mtc_tcp_server_path], shell=True)
             elif command[1] == 'su':
                 subprocess.Popen(['start', 'python', mtc_udp_server_path], shell=True)
+    elif command[0] == 'r':
+        main_rpc_rmi()
     elif command[0] == 'del':
         subprocess.Popen(['del', '*.log'], shell=True)
     else:
