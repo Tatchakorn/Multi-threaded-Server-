@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 pyro5 = "*"
 rpyc = "*"
+ray = "*"
+pika = "*"
+aio-pika = "*"
 
 [dev-packages]
 

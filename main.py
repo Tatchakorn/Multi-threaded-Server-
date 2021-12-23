@@ -13,19 +13,22 @@ from glob import glob
 from pathlib import Path
 from typing import Union
 
-multithread_test_path = Path('./multi_threaded/test.py')
-multithread_server_path = Path('./multi_threaded/server.py')
-mtc_test_path = Path('./multicast/test.py')
-mtc_tcp_server_path = Path('./multicast/tcp_server.py')
-mtc_udp_server_path = Path('./multicast/udp_server.py')
-mtc_mtc_send_path = Path('./multicast/mtc_send.py')
-mtc_mtc_recv_path = Path('./multicast/mtc_recv.py')
+multi_threaded_folder = Path('./multi_threaded')
+multicast_folder = Path('./multicast')
+rpc_rmi_folder = Path('./rpc_rmi')
 
+multithread_test_path = multi_threaded_folder.joinpath('test.py')
+multithread_server_path = multi_threaded_folder.joinpath('server.py')
+mtc_test_path = multicast_folder.joinpath('test.py')
+mtc_tcp_server_path = multicast_folder.joinpath('tcp_server.py')
+mtc_udp_server_path = multicast_folder.joinpath('udp_server.py')
+mtc_mtc_send_path = multicast_folder.joinpath('mtc_send.py')
+mtc_mtc_recv_path = multicast_folder.joinpath('mtc_recv.py')
 
-rpc_client_path = Path('./rpc_rmi/rpc_client.py')
-rpc_server_path = Path('./rpc_rmi/rpc_server.py')
-rmi_client_path = Path('./rpc_rmi/rmi_client.py')
-rmi_server_path = Path('./rpc_rmi/rmi_server.py')
+rpc_client_path = rpc_rmi_folder.joinpath('rpc_client.py')
+rpc_server_path = rpc_rmi_folder.joinpath('rpc_server.py')
+rmi_client_path = rpc_rmi_folder.joinpath('rmi_client.py')
+rmi_server_path = rpc_rmi_folder.joinpath('rmi_server.py')
 
 
 def main_rpc_rmi():
